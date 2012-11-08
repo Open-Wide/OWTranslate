@@ -1,0 +1,11 @@
+.translation_edit {
+    width: 200px !important;
+}
+.empty_edit {
+    color: #0B4E7A;
+    text-decoration: underline;
+    cursor: pointer;    
+}
+.edit {
+    cursor: pointer;
+}
