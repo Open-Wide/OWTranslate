@@ -1,0 +1,30 @@
+Extension : OW Translate
+Requires : eZ Publish 4.x.x (not tested on 3.X)
+Author : Open Wide <http://www.openwide.fr>
+
+What is OW Translate?
+-------------------
+
+OW Translate is an ezpublish extension which supplies several tools 
+ - A generator of files of translation for all languages of your site
+ - An interface allowing to administer each of these translations
+
+License
+-------
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of version 2.0 of the GNU General
+Public License as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+Read /LICENSE
+
+
+Installation
+------------
+
+Read doc/INSTALL
