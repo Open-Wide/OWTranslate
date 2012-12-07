@@ -118,7 +118,7 @@ class OWTranslateTranslationFileGenerator {
                 if (preg_match_all('#\{[\'"]([^\}]+)[\'"]\|i18n\([\'"]([^}]+)[\'"]\)\}#', $buffer, $tmpMatches)) {
                     $matches['template'][] = $tmpMatches;
                 } else {
-                	if (preg_match_all('#ezpI18n::tr\( ?[\'"]([^\}]+)[\'"] ?, ?[\'"]([^\}]+)[\'"] ?\)#', $buffer, $tmpMatches)) {
+                	if (preg_match_all('#ezpI18n::tr\([ ]*[\'"]([^\)\}]+)[\'"][ ]*,[ ]*[\'"]([^\)\}]+)[\'"][ ]*\)#', $buffer, $tmpMatches)) {
 	                	$matches['php'][] = $tmpMatches;
                 	}
                 }
