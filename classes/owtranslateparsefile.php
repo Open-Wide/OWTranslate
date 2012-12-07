@@ -1,5 +1,10 @@
 <?php
-	
+/**
+*	@desc 		class OWTranslateParseFile		
+*	@author 	David LE RICHE <david.leriche@openwide.fr>
+*	@copyright	2012
+*	@version 	1.1
+*/	
 class OWTranslateParseFile {
 	
 	public $fileList = array();	
@@ -17,6 +22,20 @@ class OWTranslateParseFile {
 	public $currentValuesTranslate = array();
 	public $futureValuesTranslate = array();
 	
+	/**
+	*	@desc		Constructeur
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		array $params => 
+	*				contains :  - fileTranslationList (for settings local use in your site)
+	*							- nbPage (number total of pages)
+	*							- page (current number page)
+	*							- sourceKey (key of source context translation's file)
+	*							- dataKey (key of source message translation's file)
+	*							- translate (future value for source message translation's file)
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public function __construct($params) {
 		if (is_array($params) && isset($params['fileTranslationList'])) {
 			$this->setFileListById($params['fileTranslationList']);
@@ -33,6 +52,14 @@ class OWTranslateParseFile {
 		}
 	} 
 	
+	/**
+	*	@desc		settings local use in your site
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		array $fileTranslationList => translation's file list
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function setFileListById($fileTranslationList) {
 		$languageListe = eZContentLanguage::fetchList();
 		foreach ($languageListe as $language) {
@@ -50,6 +77,13 @@ class OWTranslateParseFile {
 		}
 	}
 	
+	/**
+	*	@desc		Get the translation's list (source and values for all languages) you want to see
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array 
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getListToShow() {
 		$this->parse();		
 		$this->sortTranslationListFile();
@@ -57,6 +91,13 @@ class OWTranslateParseFile {
 		return $this->datas;
 	}
 	
+	/**
+	*	@desc		xml parse for all translation's file
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function parse() {
 		foreach ($this->fileList as $key => $file) {
 			if (file_exists($file)) {
@@ -69,6 +110,13 @@ class OWTranslateParseFile {
 		}
 	}
 	
+	/**
+	*	@desc		Get the  translation source list you want to see
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function sortTranslationListFile() {	
 		$this->datas = array();	
 		$offset = ($this->page * $this->numberPerPage) - $this->numberPerPage;
@@ -105,6 +153,13 @@ class OWTranslateParseFile {
 		}	
 	}
 	
+	/**
+	*	@desc		Get the translation values corresponds to the  source list you want to see
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getTranslationValuesToFileList() {		
 		foreach($this->xmlList as $localeKey => $xml) {
 			foreach ($this->datas as $sourceKey => $messageList) {
@@ -127,6 +182,13 @@ class OWTranslateParseFile {
 		}
 	}
 	
+	/**
+	*	@desc		Get the total number of translation
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		int
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getNumberTranslation() {
 		// get the main locale key
 		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
@@ -145,6 +207,13 @@ class OWTranslateParseFile {
 		return $this->numberTotal;
 	}
 	
+	/**
+	*	@desc		Get all the translation for one source message for edit
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getTranslationForEdit() {
 		$this->parse();
 		$xpath = "//context[name='".$this->currentSourceContext."']/message[source='".$this->currentNameTranslate."']/translation";
@@ -159,6 +228,13 @@ class OWTranslateParseFile {
 		return $this->currentValuesTranslate;
 	}	
 	
+	/**
+	*	@desc		Set the translation value for one or all language found for message source
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		bool
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function setTranslation() {
 		$returnValue = false;
 		$this->parse();
@@ -183,6 +259,13 @@ class OWTranslateParseFile {
 		return $returnValue;
 	}
 	
+	/**
+	*	@desc		Get the translation's list you want to search
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getDataToSearch() {
 		$datasToSearch = array(
 			'context' 		=> array(),
@@ -201,14 +284,35 @@ class OWTranslateParseFile {
 		return $datasToSearch;
 	}
 	
+	/**
+	*	@desc		Get values translation'list 
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getDataValues() {
 		return $this->dataValues;
 	}
 	
+	/**
+	*	@desc		Get the language name by an id
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		string
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getLanguageNameById($id) {
 		return $this->languageList[$id]['name'];
 	}
 	
+	/**
+	*	@desc		Get the language's id by local
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		int
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
 	public function getLanguageIdByLocale($locale) {
 		$language = eZContentLanguage::fetchByLocale($locale);
 		return $language->ID;

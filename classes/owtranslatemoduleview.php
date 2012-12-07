@@ -1,7 +1,21 @@
 <?php
-
+/**
+*	@desc 		class OWTranslateModuleView		
+*	@author 	David LE RICHE <david.leriche@openwide.fr>
+*	@copyright	2012
+*	@version 	1.1
+*/
 class OWTranslateModuleView {
 	
+	/**
+	*	@desc		Return the view to the module
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		string $view => the template you want  
+	*				mixed $tpl => ezTemplate class loaded
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public static function getView($view, $tpl=false) {
 		if (!$tpl) {
 			$tpl = eZTemplate::factory();
@@ -18,6 +32,14 @@ class OWTranslateModuleView {
 		
 	}
 	
+	/**
+	*	@desc		The view : list
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		array $Params => view parameter array 
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public static function translationList($Params) {
 		// get the list of translation file
 		$fileTranslationList = self::getTranslationListFile();
@@ -57,6 +79,14 @@ class OWTranslateModuleView {
 		}
 	} 
 	
+	/**
+	*	@desc		The view : edit
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		array $Params => view parameter array 
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public function editTranslation($Params) {
 		// get the list of translation file
 		$fileTranslationList = self::getTranslationListFile();	
@@ -104,6 +134,14 @@ class OWTranslateModuleView {
 		}
 	}
 	
+	/**
+	*	@desc		The view : generation
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		array $params => view parameter array 
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public static function generateTranslation($Params) {
 		$tpl = eZTemplate::factory();
 		
@@ -131,6 +169,13 @@ class OWTranslateModuleView {
 		return $Result;
 	}
 	
+	/**
+	*	@desc		The view : ajax_edit
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public static function ajaxEditTranslation() {
 		if (isset($_POST['id']) && $_POST['value']) {
 			$fileTranslationList = self::getTranslationListFile();
@@ -167,6 +212,13 @@ class OWTranslateModuleView {
 		}
 	}
 	
+	/**
+	*	@desc		Get the file list translation
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
 	public static function getTranslationListFile() {
 		$extensionIni = eZINI::instance('owtranslate.ini');
 		$directoryMainExtension = $extensionIni->variable( 'MainExtension', 'directory');

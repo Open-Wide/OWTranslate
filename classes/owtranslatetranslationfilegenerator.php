@@ -1,5 +1,10 @@
 <?php
-
+/**
+*	@desc 		class OWTranslateTranslationFileGenerator		
+*	@author 	David LE RICHE <david.leriche@openwide.fr>
+*	@copyright	2012
+*	@version 	1.1
+*/
 class OWTranslateTranslationFileGenerator {
     
     public $tabPath;
@@ -8,6 +13,13 @@ class OWTranslateTranslationFileGenerator {
     
     private $tabKey;
     
+    /**
+	*	@desc		Constructeur
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
     public function __construct() {
         try {
             $this->tabPath = array();
@@ -18,6 +30,14 @@ class OWTranslateTranslationFileGenerator {
         }
     }
     
+    /**
+	*	@desc		Add path to the list 
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@params		string	$path => path for check files
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function addPath($path = null) {
         if ($path === null) {
             throw new Exception('A path can not be null !');
@@ -28,6 +48,14 @@ class OWTranslateTranslationFileGenerator {
         }
     }
     
+    /**
+	*	@desc		Add file to the list 
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@params		string	$file => file for checing
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function addFile($file = null) {
         if ($file === null) {
             throw new Exception('A file name can not be null !');
@@ -38,6 +66,13 @@ class OWTranslateTranslationFileGenerator {
         }
     }
     
+    /**
+	*	@desc		Get the list of path
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function getTabPath() {
         $listPath = '';
         $i = 1;
@@ -48,6 +83,13 @@ class OWTranslateTranslationFileGenerator {
         return $listPath;   
     }
     
+    /**
+	*	@desc		Get the list of file
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function getTabFile() {
         $listFile = '';
         $i = 1;
@@ -58,6 +100,13 @@ class OWTranslateTranslationFileGenerator {
         return $listFile;
     }
     
+    /**
+	*	@desc		Analyse all files to find translation
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function analyseFiles() {
         $finalMatches = array();
         $tabTrad = array();
@@ -97,6 +146,13 @@ class OWTranslateTranslationFileGenerator {
         return $tabTrad;
     }
     
+    /**
+	*	@desc		Generate xml file for all locale on your site with all translation found
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		bool
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function generateXML() {
     	$this->languageList = eZContentLanguage::fetchList();
     	$directoryMainExtension = eZINI::instance('owtranslate.ini')->variable( 'MainExtension', 'directory');		
@@ -119,6 +175,14 @@ class OWTranslateTranslationFileGenerator {
         return $saveXml;
     }
     
+    /**
+	*	@desc		Add the new translation found in the existing file of translation 
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@params		string	$file => the file where the translation is adding
+	*	@return		bool
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function addTranslationIfNotExist($file) {
     	$tsFile = new DOMDocument();
 		$tsFile->load($file);
@@ -165,6 +229,14 @@ class OWTranslateTranslationFileGenerator {
        	return $saveXml;
     }
     
+    /**
+	*	@desc		Create translation file with all translation found
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@params		string	$file => the file where the translation is adding
+	*	@return		bool
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function addTranslationFile($file) {
     	
 		$doctype = DOMImplementation::createDocumentType("TS"); 
@@ -192,6 +264,13 @@ class OWTranslateTranslationFileGenerator {
         return $saveXml;
     }
     
+    /**
+	*	@desc		Create all local directory for every language of your site
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@params		string	$baseDirectory => the base folder you want to create local dir
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function createLocaleDirIfNotExist($baseDirectory) {
 		if (!is_dir($baseDirectory)) {
 			eZDir::mkdir($baseDirectory, octdec('0775'));
@@ -208,6 +287,14 @@ class OWTranslateTranslationFileGenerator {
     	}
     }
     
+    /**
+	*	@desc		Scan directory to find translation
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@params		string	$directory => the base folder you want to scan
+	*	@return 	array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
     public function scanDirectory($directory = null) {
         if ($directory === null) {
             throw new Exception('Directory param can not be null');
