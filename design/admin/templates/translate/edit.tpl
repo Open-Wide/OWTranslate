@@ -19,7 +19,7 @@
         
     {foreach $dataforEdit as $keyLanguage => $value}        
         <div style="margin:10px 5px;">
-            <label>{$languageList.$keyLanguage.name}</label>
+            <label><img src="{concat('/share/icons/flags/', $languageList.$keyLanguage.locale|extract( 0, 6 ), '.gif')}" />&nbsp;{$languageList.$keyLanguage.name}</label>
             <textarea name="translate[{$keyLanguage}]" rows="4" cols="50">{$value}</textarea>
         </div>
     {/foreach}    

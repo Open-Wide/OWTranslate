@@ -1,7 +1,7 @@
 {*?template charset=UTF-8*}
 <div class="box-header">
     <div class="button-left">
-        <h2 class="context-title">{'Translation Generator'|i18n('owtranslate')}</h2>
+        <h2 class="context-title">{'Translation'|i18n('owtranslate')}</h2>
     </div>
     <div class="float-break"></div>
 </div>

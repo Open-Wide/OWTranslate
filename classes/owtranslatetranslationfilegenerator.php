@@ -105,10 +105,15 @@ class OWTranslateTranslationFileGenerator {
         
         // verification file translation exist
         foreach ($this->languageList as $language) {
-        	if (file_exists($baseDirectory.'/'.$language->Locale.'/translation.ts')) {
-				$saveXml = $this->addTranslationIfNotExist($baseDirectory.'/'.$language->Locale.'/translation.ts');			
+        	if ($language->Locale == 'eng-GB') {
+    			$locale = 'eng-GB@override';	
+    		} else {
+    			$locale = $language->Locale;
+    		}
+        	if (file_exists($baseDirectory.'/'.$locale.'/translation.ts')) {
+				$saveXml = $this->addTranslationIfNotExist($baseDirectory.'/'.$locale.'/translation.ts');			
         	} else {        		
-		        $saveXml = $this->addTranslationFile($baseDirectory.'/'.$language->Locale.'/translation.ts');
+		        $saveXml = $this->addTranslationFile($baseDirectory.'/'.$locale.'/translation.ts');
         	}
         } 
         return $saveXml;
@@ -192,8 +197,13 @@ class OWTranslateTranslationFileGenerator {
 			eZDir::mkdir($baseDirectory, octdec('0775'));
 		}
     	foreach ($this->languageList as $language) {
-    		if (!is_dir($baseDirectory.'/'.$language->Locale)) {
-    			eZDir::mkdir($baseDirectory.'/'.$language->Locale, octdec('0775'));
+    		if ($language->Locale == 'eng-GB') {
+    			$locale = 'eng-GB@override';	
+    		} else {
+    			$locale = $language->Locale;
+    		}
+    		if (!is_dir($baseDirectory.'/'.$locale)) {
+    			eZDir::mkdir($baseDirectory.'/'.$locale, octdec('0775'));
     		}
     	}
     }
@@ -232,18 +242,5 @@ class OWTranslateTranslationFileGenerator {
         }
         return $tabFile;
     }
-    
-    public static function d($string) {
-		echo '<pre>';
-		var_dump($string);
-		echo '</pre>';
-	}
-	
-	public static function dd($string) {
-		echo '<pre>';
-		var_dump($string);
-		echo '</pre>';
-		exit;
-	}
 }
 ?>

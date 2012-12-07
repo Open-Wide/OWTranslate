@@ -27,12 +27,18 @@ class OWTranslateModuleView {
 			'fileTranslationList'	=> $fileTranslationList,
 			'nbPage'				=> isset($Params['UserParameters']['nbPage']) ? $Params['UserParameters']['nbPage'] : '10', 
 			'page'					=> isset($Params['UserParameters']['page']) ? $Params['UserParameters']['page'] : '1',
+			'sourceKey'				=> isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : '',
+			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',
 		);
+		
 		try {
 			$parseFile = new OWTranslateParseFile($parseFileParams);
 			$dataList = $parseFile->getListToShow();	
 			$dataValues = $parseFile->getDataValues();	
-		
+			
+			// get data for search
+			$dataToSearch = $parseFile->getDataToSearch();		
+			
 			// return the view
 			$tpl = eZTemplate::factory();
 			$tpl->setVariable('dataList', $dataList);
@@ -40,7 +46,9 @@ class OWTranslateModuleView {
 			$tpl->setVariable('languageList', $parseFile->languageList);
 			$tpl->setVariable('nbPage', $parseFileParams['nbPage']);
 			$tpl->setVariable('page', $parseFileParams['page']);
+			$tpl->setVariable('sourceKey', $parseFileParams['sourceKey']);
 			$tpl->setVariable('numberTotal', $parseFile->getNumberTranslation());
+			$tpl->setVariable('dataToSearch', $dataToSearch);
 			$Result = self::getView('list', $tpl);
 			
 			return $Result;
@@ -52,7 +60,7 @@ class OWTranslateModuleView {
 	public function editTranslation($Params) {
 		// get the list of translation file
 		$fileTranslationList = self::getTranslationListFile();	
-			
+		
 		if (isset($_POST['todo']) && $_POST['todo'] == 'validEdit') {
 			$params = array();
 			unset($_POST['todo']);
@@ -144,7 +152,7 @@ class OWTranslateModuleView {
 				if ($parseFile->setTranslation()) {
 					echo $_POST['value'];
 				} else {
-					$currentTranslation = $parseFile->getTranslationForEdit();
+					$currentTranslation = $parseFile->getTranslationForEdit();					
 					echo $currentTranslation[$localeKey];
 				}
 				
@@ -154,7 +162,8 @@ class OWTranslateModuleView {
 				eZLog::write($e, 'owtranslate.log');
 			}
 		} else {
-			eZHTTPTool::redirect('/translate/list');
+			$Result = array('pagelayout' => false);
+			return $Result;
 		}
 	}
 	
@@ -174,19 +183,6 @@ class OWTranslateModuleView {
 			}
 		}
 		return $fileTranslationList;
-	}
-	
-	public static function d($string) {
-		echo '<pre>';
-		var_dump($string);
-		echo '</pre>';
-	}
-	
-	public static function dd($string) {
-		echo '<pre>';
-		var_dump($string);
-		echo '</pre>';
-		exit;
 	}
 }
 

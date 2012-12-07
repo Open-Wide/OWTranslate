@@ -37,13 +37,13 @@ class OWTranslateParseFile {
 		$languageListe = eZContentLanguage::fetchList();
 		foreach ($languageListe as $language) {
 			$this->languageList[$language->ID] = array(
-				'locale' 	=> $language->Locale,
+				'locale' 	=> ($language->Locale == 'eng-GB' ? 'eng-GB@override' : $language->Locale),
 				'name'		=> $language->Name,
 			); 
 		}
 		foreach ($fileTranslationList as $fileKey => $file) {
 			foreach ($this->languageList as $key => $language) {
-				if (substr($fileKey, 0,  6) == $language['locale']) {
+				if (substr($fileKey, 0,  6) == substr($language['locale'], 0, 6)) {
 					$this->fileList[$key] = $file;		
 				}
 			}
@@ -53,13 +53,11 @@ class OWTranslateParseFile {
 	public function getListToShow() {
 		$this->parse();		
 		$this->sortTranslationListFile();
-		if (count($this->languageList) <= 5) {
-			$this->getTranslationValuesToFileList();
-		}
+		$this->getTranslationValuesToFileList();
 		return $this->datas;
 	}
 	
-	public function parse() {		 
+	public function parse() {
 		foreach ($this->fileList as $key => $file) {
 			if (file_exists($file)) {
 				try {
@@ -80,13 +78,19 @@ class OWTranslateParseFile {
 		// get the main locale key
 		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
 				
-		foreach($this->xmlList[$mainLocaleKey] as $context) {			
+		foreach($this->xmlList[$mainLocaleKey] as $context) {
 			if ($compteur >= ($this->numberPerPage * $this->page)) {
 				break;	
 			}
 			$countMessagePerContext += count($context->message);
 			if ($offset < $countMessagePerContext) {
+				if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
+					continue;
+				}
 				foreach ($context->message as $message) {
+					if ($this->currentNameTranslate && (string)$message->source != $this->currentNameTranslate) {
+						continue;
+					}
 					if ($compteur >= $offset && $compteur < ($this->numberPerPage * $this->page)) {
 						$this->datas[(string)$context->name][] = (string)$message->source;
 					}
@@ -104,7 +108,13 @@ class OWTranslateParseFile {
 	public function getTranslationValuesToFileList() {		
 		foreach($this->xmlList as $localeKey => $xml) {
 			foreach ($this->datas as $sourceKey => $messageList) {
+				if ($this->currentSourceContext && (string)$sourceKey != $this->currentSourceContext) {
+					continue;
+				}
 				foreach ($messageList as $message) {
+					if ($this->currentNameTranslate && (string)$message != $this->currentNameTranslate) {
+						continue;
+					}
 					try {
 						$xpath = "//context[name='".$sourceKey."']/message[source='".$message."']/translation";
 						$element = $xml->xpath($xpath);
@@ -121,8 +131,15 @@ class OWTranslateParseFile {
 		// get the main locale key
 		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
 		if ($this->numberTotal == 0) {
-			foreach($this->xmlList[$mainLocaleKey] as $context) {
-				$this->numberTotal += count($context->message);	
+			if ($this->currentNameTranslate) {
+				$this->numberTotal = count($this->datas);
+			} else {
+				foreach($this->xmlList[$mainLocaleKey] as $context) {
+					if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
+						continue;
+					}
+					$this->numberTotal += count($context->message);
+				}
 			}
 		}
 		return $this->numberTotal;
@@ -166,6 +183,24 @@ class OWTranslateParseFile {
 		return $returnValue;
 	}
 	
+	public function getDataToSearch() {
+		$datasToSearch = array(
+			'context' 		=> array(),
+			'translation' 	=> array()
+		);	
+		
+		// get the main locale key
+		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
+				
+		foreach($this->xmlList[$mainLocaleKey] as $context) {
+			if (!in_array((string)$context->name, $datasToSearch['context'])) {
+				$datasToSearch['context'][] = (string)$context->name; 
+			}
+		}
+		
+		return $datasToSearch;
+	}
+	
 	public function getDataValues() {
 		return $this->dataValues;
 	}
@@ -177,19 +212,6 @@ class OWTranslateParseFile {
 	public function getLanguageIdByLocale($locale) {
 		$language = eZContentLanguage::fetchByLocale($locale);
 		return $language->ID;
-	}
-	
-	public static function d($string) {
-		echo '<pre>';
-		var_dump($string);
-		echo '</pre>';
-	}
-	
-	public static function dd($string) {
-		echo '<pre>';
-		var_dump($string);
-		echo '</pre>';
-		exit;
 	}
 }
 	

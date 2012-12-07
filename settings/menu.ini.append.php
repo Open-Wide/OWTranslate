@@ -1,14 +1,14 @@
 <?php /*
 
 [NavigationPart]
-Part[translatenavigationpart]=Translation Generator
+Part[translatenavigationpart]=Translation
  
 [TopAdminMenu]
 Tabs[]=translate
  
 [Topmenu_translate]
 NavigationPartIdentifier=translatenavigationpart
-Name=Translation Generator
+Name=Translation
 URL[]
 URL[default]=translate/translation
 Enabled[]
