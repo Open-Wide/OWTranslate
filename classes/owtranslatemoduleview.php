@@ -49,7 +49,7 @@ class OWTranslateModuleView {
 			'fileTranslationList'	=> $fileTranslationList,
 			'nbPage'				=> isset($Params['UserParameters']['nbPage']) ? $Params['UserParameters']['nbPage'] : '10', 
 			'page'					=> isset($Params['UserParameters']['page']) ? $Params['UserParameters']['page'] : '1',
-			'sourceKey'				=> isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : '',
+			'sourceKey'				=> (isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : (isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : '')),
 			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',
 		);
 		
@@ -71,6 +71,7 @@ class OWTranslateModuleView {
 			$tpl->setVariable('sourceKey', $parseFileParams['sourceKey']);
 			$tpl->setVariable('numberTotal', $parseFile->getNumberTranslation());
 			$tpl->setVariable('dataToSearch', $dataToSearch);
+			$tpl->setVariable('locale', (isset($Params['UserParameters']['locale']) ? $Params['UserParameters']['locale'] : (isset($_GET['locale']) && $_GET['locale'] != '' ? $_GET['locale'] : false)));
 			$Result = self::getView('list', $tpl);
 			
 			return $Result;

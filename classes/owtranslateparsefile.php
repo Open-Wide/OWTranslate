@@ -130,13 +130,13 @@ class OWTranslateParseFile {
 			if ($compteur >= ($this->numberPerPage * $this->page)) {
 				break;	
 			}
+			if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
+				continue;
+			}
 			$countMessagePerContext += count($context->message);
 			if ($offset < $countMessagePerContext) {
-				if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
-					continue;
-				}
 				foreach ($context->message as $message) {
-					if ($this->currentNameTranslate && (string)$message->source != $this->currentNameTranslate) {
+					if ($this->currentNameTranslate && (string)$message->source != $this->currentNameTranslate) {						
 						continue;
 					}
 					if ($compteur >= $offset && $compteur < ($this->numberPerPage * $this->page)) {

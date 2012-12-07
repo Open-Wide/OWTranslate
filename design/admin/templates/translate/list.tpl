@@ -5,10 +5,14 @@
     $dataKeyGet = false()
 }
 {if ezhttp_hasvariable( 'locale', 'get' )}
-    {set $localeGet = ezhttp( 'locale', 'get' )}    
+    {set $localeGet = ezhttp( 'locale', 'get' )}
+{else}
+    {set $localeGet = $locale}        
 {/if}
 {if ezhttp_hasvariable( 'sourceKey', 'get' )}
-    {set $sourceKeyGet = ezhttp( 'sourceKey', 'get' )}    
+    {set $sourceKeyGet = ezhttp( 'sourceKey', 'get' )}
+{else}
+    {set $sourceKeyGet = $sourceKey}        
 {/if}
 {if ezhttp_hasvariable( 'dataKey', 'get' )}
     {set $dataKeyGet = ezhttp( 'dataKey', 'get' )}    
