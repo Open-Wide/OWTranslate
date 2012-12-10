@@ -171,8 +171,8 @@ class OWTranslateParseFile {
 						continue;
 					}
 					try {
-						$xpath = "//context[name='".$sourceKey."']/message[source='".$message."']/translation";
-						$element = $xml->xpath($xpath);
+						$query = "//context[name=".(strpos($sourceKey, "'") === false ? "'$sourceKey'" : "\"$sourceKey\"")."]/message[source=".(strpos($message, "'") === false ? "'$message'" : "\"$message\"")."]/translation";
+						$element = $xml->xpath($query);
 						$this->dataValues[$localeKey][$message] = (string)$element[0];
 					} catch (Exception $e) {
 						eZLog::write($e, 'owtranslate.log');
@@ -216,10 +216,10 @@ class OWTranslateParseFile {
 	*/
 	public function getTranslationForEdit() {
 		$this->parse();
-		$xpath = "//context[name='".$this->currentSourceContext."']/message[source='".$this->currentNameTranslate."']/translation";
+		$query = "//context[name=".(strpos($this->currentSourceContext, "'") === false ? "'$this->currentSourceContext'" : "\"$this->currentSourceContext\"")."]/message[source=".(strpos($this->currentNameTranslate, "'") === false ? "'$this->currentNameTranslate'" : "\"$this->currentNameTranslate\"")."]/translation";
 		foreach($this->xmlList as $keyXml => $xml) {
 			try {
-				$element = $xml->xpath($xpath);
+				$element = $xml->xpath($query);
 				$this->currentValuesTranslate[$keyXml] = (string)$element[0];
 			} catch (Exception $e) {
 				eZLog::write($e, 'owtranslate.log');
@@ -238,11 +238,11 @@ class OWTranslateParseFile {
 	public function setTranslation() {
 		$returnValue = false;
 		$this->parse();
-		$xpath = "//context[name='".$this->currentSourceContext."']/message[source='".$this->currentNameTranslate."']/translation";
+		$query = "//context[name=".(strpos($this->currentSourceContext, "'") === false ? "'$this->currentSourceContext'" : "\"$this->currentSourceContext\"")."]/message[source=".(strpos($this->currentNameTranslate, "'") === false ? "'$this->currentNameTranslate'" : "\"$this->currentNameTranslate\"")."]/translation";
 		foreach($this->xmlList as $keyXml => $xml) {
 			if (isset($this->futureValuesTranslate[$keyXml])) {
 				try {
-					$element = $xml->xpath($xpath);
+					$element = $xml->xpath($query);
 					$newValue = $this->futureValuesTranslate[$keyXml];
 					$element[0][0] = $newValue;
 					if (file_exists($this->fileList[$keyXml])) {

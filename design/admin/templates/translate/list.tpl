@@ -55,8 +55,8 @@
     {foreach $dataList as $sourceKey => $dataSource}
         {foreach $dataSource as $data}
                 <tr class="{cond($compteur|mod(2)|eq(0), 'bgdark', 'bglight')}">
-                    <td><a title="{$data}" href={concat('translate/edit/', '(sourceKey)/', $sourceKey, '/(dataKey)/', $data)|ezurl()}>{$data|shortenw(30, '...')}</a></td>
-                    <td title="{$sourceKey}" class="class"><a href={concat('translate/list/(sourceKey)/', $sourceKey)|ezurl()}>{$sourceKey|shortenw(30, '...')}</a></td>
+                    <td><a title="{$data}" href={concat('translate/edit/', '(sourceKey)/', $sourceKey, '/(dataKey)/', $data)|ezurl()}>{$data|shorten(30)}</a></td>
+                    <td title="{$sourceKey}" class="class"><a href={concat('translate/list/(sourceKey)/', $sourceKey)|ezurl()}>{$sourceKey|shorten(30)}</a></td>
             {if or(lt($languageList|count(), 6), $localeGet)}
                 {foreach $dataValues as $localeKey => $values}
                     <td {if and($localeGet, ne($languageList.$localeKey.locale, $localeGet))}style="display:none"{/if} id="{$localeKey}|{$sourceKey}|{$data}" class="edit {cond($values.$data|eq(''), 'empty_edit')}">{$values.$data}</td>

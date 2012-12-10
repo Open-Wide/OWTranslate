@@ -7,7 +7,7 @@
             <select name="sourceKey">
                 <option value="">{'Choose context'|i18n('owtranslate')}</option>
 {foreach $dataToSearch.context as $context}
-                <option title="{$context}" value="{$context}" {if eq($sourceKeyGet, $context)}selected{/if}>{$context|shortenw(30, '...')}</option>
+                <option title="{$context}" value="{$context}" {if eq($sourceKeyGet, $context)}selected{/if}>{$context|shorten(30)}</option>
 {/foreach}                
             </select>
         </div>

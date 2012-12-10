@@ -192,33 +192,40 @@ class OWTranslateTranslationFileGenerator {
     	
     	foreach($this->tabKey as $sourceName => $tabElement) {    
             foreach ($tabElement as $element) {
-            	if (!$xpath->query("//context[name='".$sourceName."']/message[source='".$element."']")->item(0)) {
+            	$query = "//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]/message[source=".(strpos($element, "'") === false ? "'$element'" : "\"$element\"")."]";
+            	try {
+            		if ($xpath->query($query) && !$xpath->query($query)->item(0)) {
             		
-            		$message = $tsFile->createElement('message');
-                	$source = $tsFile->createElement('source', $element);
-                	$translation = $tsFile->createElement('translation');
-            		
-            		if (!$xpath->query("//context[name='".$sourceName."']")->item(0)) {
-            			$context = $tsFile->createElement('context');
-            			$name = $tsFile->createELement('name', $sourceName);
-            			
-            			$context->appendChild($name);
-	                	$message->appendChild($source);
-	                	$message->appendChild($translation);
-	                	$context->appendChild($message);
-	                	$ts->appendChild($context);
-	                	
-            		} else {
-            			$name = $xpath->query("//context[name='".$sourceName."']")->item(0);
-            			$context = $xpath->query("//context[name='".$sourceName."']/..")->item(0);
-	                	
-	                	$message->appendChild($source);
-	                	$message->appendChild($translation);
-	                	$name->appendChild($message);
+	            		$message = $tsFile->createElement('message');
+	                	$source = $tsFile->createElement('source', $element);
+	                	$translation = $tsFile->createElement('translation');
+	            		
+	            		$querySourceName = "//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]";
+	            		if (!$xpath->query($querySourceName)->item(0)) {
+	            			$context = $tsFile->createElement('context');
+	            			$name = $tsFile->createELement('name', $sourceName);
+	            			
+	            			$context->appendChild($name);
+		                	$message->appendChild($source);
+		                	$message->appendChild($translation);
+		                	$context->appendChild($message);
+		                	$ts->appendChild($context);
+		                	
+	            		} else {
+	            			$name = $xpath->query("//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]")->item(0);
+	            			$context = $xpath->query("//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]/..")->item(0);
+		                	
+		                	$message->appendChild($source);
+		                	$message->appendChild($translation);
+		                	$name->appendChild($message);
+	            		}
             		}
-            	}            	
+        		} catch (Exception $e) {
+					eZLog::write($e, 'owtranslate.log');
+				}            	
             }
         }   
+        
         try {
         	if ($unlinkFile = unlink($file)) {
         		$saveXml = $tsFile->save($file, LIBXML_NOEMPTYTAG);
