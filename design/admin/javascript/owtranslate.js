@@ -4,7 +4,11 @@ $(document).ready(function() {
         indicator : 'Saving...',
         tooltip   : 'Click to edit...',
         callback : function(value, settings) {
-            $(this).removeClass('empty_edit');
+            if(value) {
+            	$(this).removeClass('empty_edit');
+            } else {
+            	$(this).addClass('empty_edit');
+            }
         }
     });     
     

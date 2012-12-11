@@ -187,7 +187,7 @@ class OWTranslateModuleView {
 	*	@version 	1.1
 	*/	
 	public static function ajaxEditTranslation() {
-		if (isset($_POST['id']) && $_POST['value']) {
+		if (isset($_POST['id'])) {
 			$fileTranslationList = self::getTranslationListFile();
 			
 			$id = explode('|', $_POST['id']);
