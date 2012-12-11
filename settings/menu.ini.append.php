@@ -10,7 +10,7 @@ Tabs[]=translate
 NavigationPartIdentifier=translatenavigationpart
 Name=Translation
 URL[]
-URL[default]=translate/translation
+URL[default]=translate/list
 Enabled[]
 Enabled[default]=true
 Enabled[browse]=false

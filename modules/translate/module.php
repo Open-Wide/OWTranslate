@@ -7,10 +7,6 @@ $ViewList['list'] = array( 'script' => 'list.php',
 									'default_navigation_part' => 'translatenavigationpart',
 									'params' => array( 'language'),
                                		'functions' => array( 'read' ));
-                               		
-$ViewList['translation'] = array( 'script' => 'translation.php',
-									'default_navigation_part' => 'translatenavigationpart',
-                               		'functions' => array( 'read' ));          
                                		                     		
 $ViewList['generation'] = array( 'script' => 'generation.php',
 									'default_navigation_part' => 'translatenavigationpart',

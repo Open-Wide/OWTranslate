@@ -9,6 +9,7 @@
 {if is_set($generation)}
     {if $generation}
         <p>{'The generation passed well'|i18n('owtranslate')}</p>
+        <p><a href="/translate/list">{'Go to translation list'|i18n('owtranslate')}</a></p>
     {else}
         <p style="color:red">{"A problem arose during the files generation"|i18n('owtranslate')}</p>
     {/if} 
