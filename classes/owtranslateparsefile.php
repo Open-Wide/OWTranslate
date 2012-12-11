@@ -126,7 +126,7 @@ class OWTranslateParseFile {
 		
 		// get the main locale key
 		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
-				
+        
 		foreach($this->xmlList[$mainLocaleKey] as $context) {
 			if ($compteur >= ($this->offset + $this->numberPerPage)) {
 				break;	
@@ -281,7 +281,7 @@ class OWTranslateParseFile {
 				$datasToSearch['context'][] = (string)$context->name; 
 			}
 		}
-		
+		sort($datasToSearch['context']);
 		return $datasToSearch;
 	}
 	
