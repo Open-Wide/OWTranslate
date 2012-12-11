@@ -50,7 +50,7 @@ class OWTranslateModuleView {
 		// parse file
 		$parseFileParams = array(
 			'fileTranslationList'	=> $fileTranslationList,
-			'limit'				=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '10', 
+			'limit'				=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '25', 
 			'offset'					=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
 			'sourceKey'				=> $Params['UserParameters']['sourceKey'],
 			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',

@@ -13,7 +13,7 @@ class OWTranslateParseFile {
 	public $datas = array();
 	public $dataValues = array();
 	
-	public $numberPerPage = 10;
+	public $numberPerPage = 25;
 	public $offset = 0;
 	public $numberTotal = 0;
 	
