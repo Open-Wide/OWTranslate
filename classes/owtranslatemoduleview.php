@@ -44,12 +44,15 @@ class OWTranslateModuleView {
 		// get the list of translation file
 		$fileTranslationList = self::getTranslationListFile();
 		
+		$Params['UserParameters']['sourceKey'] 	=	(isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : (isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : ''));
+		$Params['UserParameters']['locale']		=	(isset($Params['UserParameters']['locale']) ? $Params['UserParameters']['locale'] : (isset($_GET['locale']) && $_GET['locale'] != '' ? $_GET['locale'] : false));
+		
 		// parse file
 		$parseFileParams = array(
 			'fileTranslationList'	=> $fileTranslationList,
-			'nbPage'				=> isset($Params['UserParameters']['nbPage']) ? $Params['UserParameters']['nbPage'] : '10', 
-			'page'					=> isset($Params['UserParameters']['page']) ? $Params['UserParameters']['page'] : '1',
-			'sourceKey'				=> (isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : (isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : '')),
+			'limit'				=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '10', 
+			'offset'					=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
+			'sourceKey'				=> $Params['UserParameters']['sourceKey'],
 			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',
 		);
 		
@@ -59,19 +62,25 @@ class OWTranslateModuleView {
 			$dataValues = $parseFile->getDataValues();	
 			
 			// get data for search
-			$dataToSearch = $parseFile->getDataToSearch();		
+			$dataToSearch = $parseFile->getDataToSearch();
+			
+			$viewParameters = array( 'offset' => 0 );
+
+			$userParameters = $Params['UserParameters'];
+			$viewParameters = array_merge( $viewParameters, $userParameters );
 			
 			// return the view
 			$tpl = eZTemplate::factory();
 			$tpl->setVariable('dataList', $dataList);
 			$tpl->setVariable('dataValues', $dataValues);
 			$tpl->setVariable('languageList', $parseFile->languageList);
-			$tpl->setVariable('nbPage', $parseFileParams['nbPage']);
-			$tpl->setVariable('page', $parseFileParams['page']);
+			$tpl->setVariable('limit', $parseFileParams['limit']);
+			$tpl->setVariable('offset', $parseFileParams['offset']);
 			$tpl->setVariable('sourceKey', $parseFileParams['sourceKey']);
 			$tpl->setVariable('numberTotal', $parseFile->getNumberTranslation());
 			$tpl->setVariable('dataToSearch', $dataToSearch);
-			$tpl->setVariable('locale', (isset($Params['UserParameters']['locale']) ? $Params['UserParameters']['locale'] : (isset($_GET['locale']) && $_GET['locale'] != '' ? $_GET['locale'] : false)));
+			$tpl->setVariable('locale', $Params['UserParameters']['locale']);
+			$tpl->setVariable( 'view_parameters', $viewParameters );
 			$Result = self::getView('list', $tpl);
 			
 			return $Result;

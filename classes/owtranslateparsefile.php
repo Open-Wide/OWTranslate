@@ -14,7 +14,7 @@ class OWTranslateParseFile {
 	public $dataValues = array();
 	
 	public $numberPerPage = 10;
-	public $page = 10;	
+	public $offset = 0;
 	public $numberTotal = 0;
 	
 	public $currentSourceContext = false;
@@ -27,8 +27,8 @@ class OWTranslateParseFile {
 	*	@author 	David LE RICHE <david.leriche@openwide.fr>
 	*	@param		array $params => 
 	*				contains :  - fileTranslationList (for settings local use in your site)
-	*							- nbPage (number total of pages)
-	*							- page (current number page)
+	*							- limit (number total of pages)
+	*							- offset
 	*							- sourceKey (key of source context translation's file)
 	*							- dataKey (key of source message translation's file)
 	*							- translate (future value for source message translation's file)
@@ -40,8 +40,8 @@ class OWTranslateParseFile {
 		if (is_array($params) && isset($params['fileTranslationList'])) {
 			$this->setFileListById($params['fileTranslationList']);
 
-			$this->numberPerPage = (isset($params['nbPage']) ? $params['nbPage'] : $this->numberPerPage);
-			$this->page = (isset($params['page']) ? $params['page'] : $this->page);
+			$this->numberPerPage = (isset($params['limit']) ? $params['limit'] : $this->numberPerPage);
+			$this->offset = (isset($params['offset']) ? $params['offset'] : $this->offset);
 
 			$this->currentSourceContext = (isset($params['sourceKey']) ? $params['sourceKey'] : $this->currentSourceContext);
 			$this->currentNameTranslate = (isset($params['dataKey']) ? $params['dataKey'] : $this->currentNameTranslate);			
@@ -119,7 +119,7 @@ class OWTranslateParseFile {
 	*/
 	public function sortTranslationListFile() {	
 		$this->datas = array();	
-		$offset = ($this->page * $this->numberPerPage) - $this->numberPerPage;
+		$offset = $this->offset;
 		$compteur = 0;
 		$countMessagePerContext = 0;
 		
@@ -127,7 +127,7 @@ class OWTranslateParseFile {
 		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
 				
 		foreach($this->xmlList[$mainLocaleKey] as $context) {
-			if ($compteur >= ($this->numberPerPage * $this->page)) {
+			if ($compteur >= ($this->offset + $this->numberPerPage)) {
 				break;	
 			}
 			if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
@@ -139,11 +139,11 @@ class OWTranslateParseFile {
 					if ($this->currentNameTranslate && (string)$message->source != $this->currentNameTranslate) {						
 						continue;
 					}
-					if ($compteur >= $offset && $compteur < ($this->numberPerPage * $this->page)) {
+					if ($compteur >= $offset && $compteur < ($this->offset + $this->numberPerPage)) {
 						$this->datas[(string)$context->name][] = (string)$message->source;
 					}
 					$compteur++;
-					if ($compteur >= ($this->numberPerPage * $this->page)) {
+					if ($compteur >= ($this->offset + $this->numberPerPage)) {
 						break;
 					}
 				}

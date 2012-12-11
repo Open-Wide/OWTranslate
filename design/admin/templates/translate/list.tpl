@@ -41,7 +41,7 @@
 {if is_set($dataList)}
             <table class="list" cellspacing="0">
                 <tr class="bgdark">
-                    <th>{'Tranlation name'|i18n('owtranslate')}</a></td>
+                    <th>{'Translation name'|i18n('owtranslate')}</a></td>
                     <th class="class">{'Context name Tranlation'|i18n('owtranslate')}</td>
     {if or(lt($languageList|count(), 6), $localeGet)}                    
         {foreach $dataValues as $localeKey => $values}            
@@ -81,9 +81,18 @@
             </table>
 {/if}                                        
         </div>
-{if and(is_set($numberTotal), gt($numberTotal, $nbPage))}                 
-    {include uri='design:translate/pagination.tpl'}
-{/if}                
+        
+{if and(is_set($numberTotal), gt($numberTotal, $limit))}                 
+
+	<div class="context-toolbar">
+		{include name=navigator
+	         uri='design:navigator/google.tpl'
+	         page_uri='/translate/list'
+	         item_count=$numberTotal
+	         view_parameters=$view_parameters
+	         item_limit=$limit}
+	</div>
+{/if}
                 
     </div></div></div>
 </div>
