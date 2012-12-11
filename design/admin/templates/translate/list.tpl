@@ -1,6 +1,6 @@
 {*?template charset=UTF-8*}
 
-{if $numberTotal|not}
+{if $numberTotal|not|and( ezhttp_hasvariable( 'todo', 'get' )|not )}
 	<div class="box-header">
 	    <div class="button-left">
 	        <h2 class="context-title">{'Translation'|i18n('owtranslate')}</h2>
