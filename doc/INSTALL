@@ -5,9 +5,11 @@ Author : Open Wide <http://www.openwide.fr>
 Installation:
 ------------
 - Copy owtranslate in extension directory
-- set your mainExtension into settings/owtranslate.ini (default is owtranslate)
-- set your mainLocale into settings/owtranslate.ini (default is fre-FR)
-- set in ExcludeExtension  into settings/owtranslate.ini, all the extensions which you do not want to cross for the generation of the files of translation
+- If needed :
+	 - set your mainExtension into settings/owtranslate.ini (default is owtranslate)
+	 - set your mainLocale into settings/owtranslate.ini (default is eng-GB)
+	 - set in ExcludeExtension into settings/owtranslate.ini, all the extensions which you do not want to cross for the generation of the files of translation
+	 - set LocalOverride into settings/owtranslate.ini, to allow override english main language process (default map eng-GB to eng-GB@override)
 - Assure you to have voucher rights of writing for the creation of the files of translations
 - Enable the extension in site.ini
 - Clear the cache

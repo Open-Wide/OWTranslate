@@ -62,9 +62,10 @@ class OWTranslateParseFile {
 	*/
 	public function setFileListById($fileTranslationList) {
 		$languageListe = eZContentLanguage::fetchList();
+		$localeOverride = eZINI::instance('owtranslate.ini')->variable( 'LocaleOverride', 'locale');
 		foreach ($languageListe as $language) {
 			$this->languageList[$language->ID] = array(
-				'locale' 	=> ($language->Locale == 'eng-GB' ? 'eng-GB@override' : $language->Locale),
+				'locale' 	=> (array_key_exists($language->Locale, $localeOverride) ? $localeOverride[$language->Locale] : $language->Locale),
 				'name'		=> $language->Name,
 			); 
 		}

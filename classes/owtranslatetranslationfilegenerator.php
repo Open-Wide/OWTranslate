@@ -157,15 +157,14 @@ class OWTranslateTranslationFileGenerator {
     	$this->languageList = eZContentLanguage::fetchList();
     	$directoryMainExtension = eZINI::instance('owtranslate.ini')->variable( 'MainExtension', 'directory');		
 		$baseDirectory = eZExtension::baseDirectory().'/'.$directoryMainExtension.'/translations';
-    	$this->createLocaleDirIfNotExist($baseDirectory);    
+    	$this->createLocaleDirIfNotExist($baseDirectory);
+    	
+        $localeOverride = eZINI::instance('owtranslate.ini')->variable( 'LocaleOverride', 'locale');
         
         // verification file translation exist
         foreach ($this->languageList as $language) {
-        	if ($language->Locale == 'eng-GB') {
-    			$locale = 'eng-GB@override';	
-    		} else {
-    			$locale = $language->Locale;
-    		}
+        	$locale = (array_key_exists($language->Locale, $localeOverride) ? $localeOverride[$language->Locale] : $language->Locale);
+
         	if (file_exists($baseDirectory.'/'.$locale.'/translation.ts')) {
 				$saveXml = $this->addTranslationIfNotExist($baseDirectory.'/'.$locale.'/translation.ts');			
         	} else {        		
@@ -282,12 +281,9 @@ class OWTranslateTranslationFileGenerator {
 		if (!is_dir($baseDirectory)) {
 			eZDir::mkdir($baseDirectory, octdec('0775'));
 		}
+		$localeOverride = eZINI::instance('owtranslate.ini')->variable( 'LocaleOverride', 'locale');
     	foreach ($this->languageList as $language) {
-    		if ($language->Locale == 'eng-GB') {
-    			$locale = 'eng-GB@override';	
-    		} else {
-    			$locale = $language->Locale;
-    		}
+    		$locale = (array_key_exists($language->Locale, $localeOverride) ? $localeOverride[$language->Locale] : $language->Locale);
     		if (!is_dir($baseDirectory.'/'.$locale)) {
     			eZDir::mkdir($baseDirectory.'/'.$locale, octdec('0775'));
     		}
