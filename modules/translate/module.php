@@ -22,7 +22,11 @@ $ViewList['edit'] = array( 'script' => 'edit.php',
                                		
 $ViewList['ajax_edit'] = array( 'script' => 'ajax_edit.php',
 									'default_navigation_part' => 'translatenavigationpart',
-                               		'functions' => array( 'read' ));                               		
+                               		'functions' => array( 'read' ));
+                               		
+$ViewList['search'] = array( 'script' => 'search.php',
+									'default_navigation_part' => 'translatenavigationpart',
+                               		'functions' => array( 'read' ));                                 		                               		
 
 $FunctionList = array(); 
 $FunctionList['read'] = array();

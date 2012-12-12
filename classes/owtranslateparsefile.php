@@ -12,10 +12,14 @@ class OWTranslateParseFile {
 	public $xmlList = false;
 	public $datas = array();
 	public $dataValues = array();
+	public $mainLocaleKey = false;
 	
 	public $numberPerPage = 25;
 	public $offset = 0;
+	public $compteur = 0;
+	public $countMessagePerContext = 0;
 	public $numberTotal = 0;
+	
 	
 	public $currentSourceContext = false;
 	public $currentNameTranslate = false; 
@@ -47,6 +51,9 @@ class OWTranslateParseFile {
 			$this->currentNameTranslate = (isset($params['dataKey']) ? $params['dataKey'] : $this->currentNameTranslate);			
 			
 			$this->futureValuesTranslate = (isset($params['translate']) ? $params['translate'] : $this->futureValuesTranslate);
+			
+			// get the main locale key
+			$this->mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
 		} else {
 			throw new Exception('Le constructeur doit avoir un tableau en paramétre.');
 		}
@@ -88,7 +95,6 @@ class OWTranslateParseFile {
 	public function getListToShow() {
 		$this->parse();		
 		$this->sortTranslationListFile();
-		$this->getTranslationValuesToFileList();
 		return $this->datas;
 	}
 	
@@ -120,38 +126,59 @@ class OWTranslateParseFile {
 	*/
 	public function sortTranslationListFile() {	
 		$this->datas = array();	
-		$offset = $this->offset;
-		$compteur = 0;
-		$countMessagePerContext = 0;
-		
-		// get the main locale key
-		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
+		$this->dataValues = array();
+		$this->compteur = 0;
+		$this->countMessagePerContext = 0;
         
-		foreach($this->xmlList[$mainLocaleKey] as $context) {
-			if ($compteur >= ($this->offset + $this->numberPerPage)) {
-				break;	
-			}
-			if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
-				continue;
-			}
-			$countMessagePerContext += count($context->message);
-			if ($offset < $countMessagePerContext) {
-				foreach ($context->message as $message) {
-					if ($this->currentNameTranslate && (string)$message->source != $this->currentNameTranslate) {						
-						continue;
-					}
-					if ($compteur >= $offset && $compteur < ($this->offset + $this->numberPerPage)) {
-						$this->datas[(string)$context->name][] = (string)$message->source;
-					}
-					$compteur++;
-					if ($compteur >= ($this->offset + $this->numberPerPage)) {
-						break;
-					}
+        if ($this->currentSourceContext) {
+        	try {
+				$query = "//context[name=".(strpos($this->currentSourceContext, "'") === false ? "'$this->currentSourceContext'" : "\"$this->currentSourceContext\"")."]";
+				if ($context = $this->xmlList[$this->mainLocaleKey]->xpath($query)) {
+					$context = $context[0];
+					$this->getListByContext($context);
 				}
-			} else {
-				$compteur = $countMessagePerContext;
+			} catch (Exception $e) {
+				eZLog::write($e, 'owtranslate.log');
 			}
-		}	
+        } else {
+			foreach($this->xmlList[$this->mainLocaleKey] as $context) {
+				if ($this->compteur >= ($this->offset + $this->numberPerPage)) {
+					break;	
+				}
+				$this->getListByContext($context);
+			}
+        }	
+        $this->getListValuesByContext();
+	}
+	
+	/**
+	*	@desc		Get list message by source context
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@return		void
+	*	@copyright	2012
+	*	@version 	1.1
+	*/
+	public function getListByContext($context) {
+		
+		$this->countMessagePerContext += count($context->message);
+		if ($this->offset < $this->countMessagePerContext) {
+			foreach ($context->message as $message) {
+				if ($this->currentNameTranslate) {
+					if (strtolower((string)$message->source) != strtolower($this->currentNameTranslate) && strpos(strtolower((string)$message->source), strtolower($this->currentNameTranslate)) === false) {
+						continue;
+					}	
+				}
+				if ($this->compteur >= $this->offset && $this->compteur < ($this->offset + $this->numberPerPage)) {
+					$this->datas[(string)$context->name][] = (string)$message->source;
+				}
+				$this->compteur++;
+				if ($this->compteur >= ($this->offset + $this->numberPerPage)) {
+					break;
+				}
+			}
+		} else {
+			$this->compteur = $this->countMessagePerContext;
+		}
 	}
 	
 	/**
@@ -161,22 +188,31 @@ class OWTranslateParseFile {
 	*	@copyright	2012
 	*	@version 	1.1
 	*/
-	public function getTranslationValuesToFileList() {		
+	public function getListValuesByContext() {
+		// search
 		foreach($this->xmlList as $localeKey => $xml) {
-			foreach ($this->datas as $sourceKey => $messageList) {
-				if ($this->currentSourceContext && (string)$sourceKey != $this->currentSourceContext) {
-					continue;
-				}
-				foreach ($messageList as $message) {
-					if ($this->currentNameTranslate && (string)$message != $this->currentNameTranslate) {
-						continue;
+			if ($this->currentNameTranslate) {
+				try {
+					$query = "//context/message/source/text()[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), ".strtolower((strpos($this->currentNameTranslate, "'") === false ? "'$this->currentNameTranslate'" : "\"$this->currentNameTranslate\"")).")]/../..";
+					if ($elements = $xml->xpath($query)) {
+						foreach ($elements as $element) {
+							$this->dataValues[$localeKey][(string)$element->source] = (string)$element->translation;
+						} 
 					}
-					try {
-						$query = "//context[name=".(strpos($sourceKey, "'") === false ? "'$sourceKey'" : "\"$sourceKey\"")."]/message[source=".(strpos($message, "'") === false ? "'$message'" : "\"$message\"")."]/translation";
-						$element = $xml->xpath($query);
-						$this->dataValues[$localeKey][$message] = (string)$element[0];
-					} catch (Exception $e) {
-						eZLog::write($e, 'owtranslate.log');
+				} catch (Exception $e) {
+					eZLog::write($e, 'owtranslate.log');
+				}
+			} else {
+				// list
+				foreach ($this->datas as $sourceKey => $messageList) {
+					foreach ($messageList as $message) {
+						try {
+							$query = "//context[name=".(strpos($sourceKey, "'") === false ? "'$sourceKey'" : "\"$sourceKey\"")."]/message[source=".(strpos($message, "'") === false ? "'$message'" : "\"$message\"")."]/translation";
+							$element = $xml->xpath($query);
+							$this->dataValues[$localeKey][$message] = (string)$element[0];
+						} catch (Exception $e) {
+							eZLog::write($e, 'owtranslate.log');
+						}
 					}
 				}
 			}
@@ -191,13 +227,13 @@ class OWTranslateParseFile {
 	*	@version 	1.1
 	*/
 	public function getNumberTranslation() {
-		// get the main locale key
-		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
 		if ($this->numberTotal == 0) {
 			if ($this->currentNameTranslate) {
-				$this->numberTotal = count($this->datas);
+				foreach ($this->datas as $data) {
+					$this->numberTotal += count($data);	
+				}
 			} else {
-				foreach($this->xmlList[$mainLocaleKey] as $context) {
+				foreach($this->xmlList[$this->mainLocaleKey] as $context) {
 					if ($this->currentSourceContext && (string)$context->name != $this->currentSourceContext) {
 						continue;
 					}
@@ -261,28 +297,22 @@ class OWTranslateParseFile {
 	}
 	
 	/**
-	*	@desc		Get the translation's list you want to search
+	*	@desc		Get All context
 	*	@author 	David LE RICHE <david.leriche@openwide.fr>
 	*	@return		array
 	*	@copyright	2012
 	*	@version 	1.1
 	*/
-	public function getDataToSearch() {
-		$datasToSearch = array(
-			'context' 		=> array(),
-			'translation' 	=> array()
-		);	
-		
-		// get the main locale key
-		$mainLocaleKey = $this->getLanguageIdByLocale(eZINI::instance('owtranslate.ini')->variable( 'MainLocale', 'locale'));
+	public function getAllContext() {
+		$contextList = array();
 				
-		foreach($this->xmlList[$mainLocaleKey] as $context) {
-			if (!in_array((string)$context->name, $datasToSearch['context'])) {
-				$datasToSearch['context'][] = (string)$context->name; 
+		foreach($this->xmlList[$this->mainLocaleKey] as $context) {
+			if (!in_array((string)$context->name, $contextList)) {
+				$contextList[] = (string)$context->name; 
 			}
 		}
-		sort($datasToSearch['context']);
-		return $datasToSearch;
+		sort($contextList);
+		return $contextList;
 	}
 	
 	/**

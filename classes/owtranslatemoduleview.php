@@ -7,6 +7,35 @@
 */
 class OWTranslateModuleView {
 	
+	public static function commonBeforeView($Params, $parseFileParams) {
+
+		$parseFile = new OWTranslateParseFile($parseFileParams);
+		$dataList = $parseFile->getListToShow();	
+		$dataValues = $parseFile->getDataValues();	
+		
+		// get all context
+		$contextList = $parseFile->getAllContext();
+		
+		$viewParameters = array( 'offset' => 0 );
+
+		$userParameters = $Params['UserParameters'];
+		$viewParameters = array_merge( $viewParameters, $userParameters );
+		
+		// return the view
+		$tpl = eZTemplate::factory();
+		$tpl->setVariable('dataList', $dataList);
+		$tpl->setVariable('dataValues', $dataValues);
+		$tpl->setVariable('languageList', $parseFile->languageList);
+		$tpl->setVariable('limit', $parseFileParams['limit']);
+		$tpl->setVariable('offset', $parseFileParams['offset']);
+		$tpl->setVariable('sourceKey', $parseFileParams['sourceKey']);
+		$tpl->setVariable('numberTotal', $parseFile->getNumberTranslation());
+		$tpl->setVariable('contextList', $contextList);
+		$tpl->setVariable('view_parameters', $viewParameters);
+		
+		return $tpl;		
+	}
+	
 	/**
 	*	@desc		Return the view to the module
 	*	@author 	David LE RICHE <david.leriche@openwide.fr>
@@ -45,42 +74,17 @@ class OWTranslateModuleView {
 		$fileTranslationList = self::getTranslationListFile();
 		
 		$Params['UserParameters']['sourceKey'] 	=	(isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : (isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : ''));
-		$Params['UserParameters']['locale']		=	(isset($Params['UserParameters']['locale']) ? $Params['UserParameters']['locale'] : (isset($_GET['locale']) && $_GET['locale'] != '' ? $_GET['locale'] : false));
 		
 		// parse file
 		$parseFileParams = array(
 			'fileTranslationList'	=> $fileTranslationList,
-			'limit'				=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '25', 
-			'offset'					=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
+			'limit'					=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '25', 
+			'offset'				=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
 			'sourceKey'				=> $Params['UserParameters']['sourceKey'],
-			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',
 		);
 		
 		try {
-			$parseFile = new OWTranslateParseFile($parseFileParams);
-			$dataList = $parseFile->getListToShow();	
-			$dataValues = $parseFile->getDataValues();	
-			
-			// get data for search
-			$dataToSearch = $parseFile->getDataToSearch();
-			
-			$viewParameters = array( 'offset' => 0 );
-
-			$userParameters = $Params['UserParameters'];
-			$viewParameters = array_merge( $viewParameters, $userParameters );
-			
-			// return the view
-			$tpl = eZTemplate::factory();
-			$tpl->setVariable('dataList', $dataList);
-			$tpl->setVariable('dataValues', $dataValues);
-			$tpl->setVariable('languageList', $parseFile->languageList);
-			$tpl->setVariable('limit', $parseFileParams['limit']);
-			$tpl->setVariable('offset', $parseFileParams['offset']);
-			$tpl->setVariable('sourceKey', $parseFileParams['sourceKey']);
-			$tpl->setVariable('numberTotal', $parseFile->getNumberTranslation());
-			$tpl->setVariable('dataToSearch', $dataToSearch);
-			$tpl->setVariable('locale', $Params['UserParameters']['locale']);
-			$tpl->setVariable( 'view_parameters', $viewParameters );
+			$tpl = self::commonBeforeView($Params, $parseFileParams);
 			$Result = self::getView('list', $tpl);
 			
 			return $Result;
@@ -88,6 +92,43 @@ class OWTranslateModuleView {
 			eZLog::write($e, 'owtranslate.log');
 		}
 	} 
+	
+	
+	/**
+	*	@desc		The view : search
+	*	@author 	David LE RICHE <david.leriche@openwide.fr>
+	*	@param		array $Params => view parameter array 
+	*	@return		array
+	*	@copyright	2012
+	*	@version 	1.1
+	*/	
+	public static function translationSearch($Params) {
+		// get the list of translation file
+		$fileTranslationList = self::getTranslationListFile();
+		
+		$Params['UserParameters']['sourceKey'] 	=	(isset($Params['UserParameters']['sourceKey']) ? $Params['UserParameters']['sourceKey'] : (isset($_GET['sourceKey']) && $_GET['sourceKey'] != '' ? $_GET['sourceKey'] : ''));
+		$Params['UserParameters']['locale']		=	(isset($Params['UserParameters']['locale']) ? $Params['UserParameters']['locale'] : (isset($_GET['locale']) && $_GET['locale'] != '' ? $_GET['locale'] : false));
+		
+		// parse file
+		$parseFileParams = array(
+			'fileTranslationList'	=> $fileTranslationList,
+			'limit'					=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '25', 
+			'offset'				=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
+			'sourceKey'				=> $Params['UserParameters']['sourceKey'],
+			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',
+		);
+		
+		try {
+			$tpl = self::commonBeforeView($Params, $parseFileParams);
+			$tpl->setVariable('locale', $Params['UserParameters']['locale']);
+			$Result = self::getView('search', $tpl);
+			
+			return $Result;
+		} catch (Exception $e) {
+			eZLog::write($e, 'owtranslate.log');
+		}
+	} 
+	
 	
 	/**
 	*	@desc		The view : edit
