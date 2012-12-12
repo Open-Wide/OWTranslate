@@ -1,8 +1,8 @@
-Extension : OW Translate
+Extension : OWTranslate v1.2
 Requires : eZ Publish 4.x.x (not tested on 3.X)
 Author : Open Wide <http://www.openwide.fr>
 
-What is OW Translate?
+What is OWTranslate?
 -------------------
 
 OW Translate is an ezpublish extension which supplies several tools 
