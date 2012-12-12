@@ -1,12 +1,12 @@
 {*?template charset=UTF-8*}
 <fieldset>
-    <form action={'translate/list'|ezurl()} method="get">
+    <form action={'translate/search'|ezurl()} method="get">
         <input type="hidden" name="todo" value="search" />   
         <div class="fields">
             <label>{'Choose context'|i18n('owtranslate')}&nbsp;:&nbsp;</label>
             <select name="sourceKey">
                 <option value="">{'Choose context'|i18n('owtranslate')}</option>
-{foreach $dataToSearch.context as $context}
+{foreach $contextList as $context}
                 <option title="{$context}" value="{$context}" {if eq($sourceKeyGet, $context)}selected{/if}>{$context|shorten(30)}</option>
 {/foreach}                
             </select>
