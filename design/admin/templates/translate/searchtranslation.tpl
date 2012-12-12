@@ -20,7 +20,7 @@
 {/foreach}                
             </select>
         </div>
-        <div class="fields"><label>{'Search translation'|i18n('owtranslate')}&nbsp;:&nbsp;</label><input type="text" name="dataKey" value="{cond($dataKeyGet, $dataKeyGet)}" /></div>
+        <div class="fields"><label>{'Search translation key'|i18n('owtranslate')}&nbsp;:&nbsp;</label><input type="text" name="dataKey" value="{cond($dataKeyGet, $dataKeyGet)}" /></div>
         <div class="fields">
             <input type="submit" title="{'Search'|i18n('owtranslate')}" value="{'Search'|i18n('owtranslate')}" class="defaultbutton">
             <a href={'translate/list'|ezurl()} class="defaultbutton">{'Reset'|i18n('owtranslate')}</a>

@@ -9,8 +9,8 @@ Installation:
 	 - set your mainExtension into settings/owtranslate.ini (default is owtranslate)
 	 - set your mainLocale into settings/owtranslate.ini (default is eng-GB)
 	 - set in ExcludeExtension into settings/owtranslate.ini, all the extensions which you do not want to cross for the generation of the files of translation
-	 - set LocalOverride into settings/owtranslate.ini, to allow override english main language process (default map eng-GB to eng-GB@override)
+	 - set LocalOverride into settings/owtranslate.ini, to allow use non-english translation keys (see owtranslate.ini for details)
 - Assure you to have voucher rights of writing for the creation of the files of translations
-- Enable the extension in site.ini
+- Enable the extension in site.ini (in first position if you use owtranslate as mainExtension, see owtranslate.ini for details)
 - Clear the cache
 - Regenerate autoloads : php bin/php/ezpgenerateautoloads.php -e

@@ -58,8 +58,8 @@
 	{if is_set($dataList)}
 	            <table class="list" cellspacing="0">
 	                <tr class="bgdark">
-	                    <th>{'Translation name'|i18n('owtranslate')}</a></td>
-	                    <th class="class">{'Context name Tranlation'|i18n('owtranslate')}</td>
+	                    <th>{'Translation key'|i18n('owtranslate')}</a></td>
+	                    <th class="class">{'Context name Translation'|i18n('owtranslate')}</td>
 	    {if or(lt($languageList|count(), 6), $localeGet)}                    
 	        {foreach $dataValues as $localeKey => $values}            
 	                    <th class="class" {if and($localeGet, ne($languageList.$localeKey.locale, $localeGet))}style="display:none"{/if}><img src="{concat('/share/icons/flags/', $languageList.$localeKey.locale|extract( 0, 6 ), '.gif')}" />&nbsp;{$languageList.$localeKey.name}</td>
