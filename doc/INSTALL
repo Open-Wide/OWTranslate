@@ -14,3 +14,7 @@ Installation:
 - Enable the extension in site.ini (in first position if you use owtranslate as mainExtension, see owtranslate.ini for details)
 - Clear the cache
 - Regenerate autoloads : php bin/php/ezpgenerateautoloads.php -e
+
+Usage
+------------
+See README for details

@@ -6,8 +6,19 @@ What is OW Translate?
 -------------------
 
 OW Translate is an ezpublish extension which supplies several tools 
- - A generator of files of translation for all languages of your site
- - An interface allowing to administer each of these translations
+ - A generator of files of translation for all languages of your site, parsing extension templates and php files to find any i18n call.
+ - An AJAX interface allowing to administer each of these translations
+ 
+Usage
+------
+1. Go to /translation/generation and select all extensions to parse.
+	All templates and php files in those extensions will be parsed and used to generate translation files.
+	Generated translation files will be created and saved inside mainExtension/translations folder. MainExtension is setted in owtranslate.ini file.
+
+2. Go to /translation/list and translate your content.
+
+Enjoy !
+
 
 License
 -------
