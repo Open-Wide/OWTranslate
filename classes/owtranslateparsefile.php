@@ -44,7 +44,7 @@ class OWTranslateParseFile {
 		if (is_array($params) && isset($params['fileTranslationList'])) {
 			$this->setFileListById($params['fileTranslationList']);
 
-			$this->numberPerPage = (isset($params['limit']) ? $params['limit'] : $this->numberPerPage);
+			$this->numberPerPage = (isset($params['limit']) ? $params['limit'] : eZINI::instance('owtranslate.ini')->variable( 'NumberPerPage', 'default'));
 			$this->offset = (isset($params['offset']) ? $params['offset'] : $this->offset);
 
 			$this->currentSourceContext = (isset($params['sourceKey']) ? $params['sourceKey'] : $this->currentSourceContext);

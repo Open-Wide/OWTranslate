@@ -78,7 +78,7 @@ class OWTranslateModuleView {
 		// parse file
 		$parseFileParams = array(
 			'fileTranslationList'	=> $fileTranslationList,
-			'limit'					=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '25', 
+			'limit'					=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : eZINI::instance('owtranslate.ini')->variable( 'NumberPerPage', 'default'), 
 			'offset'				=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
 			'sourceKey'				=> $Params['UserParameters']['sourceKey'],
 		);
@@ -112,7 +112,7 @@ class OWTranslateModuleView {
 		// parse file
 		$parseFileParams = array(
 			'fileTranslationList'	=> $fileTranslationList,
-			'limit'					=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : '25', 
+			'limit'					=> isset($Params['UserParameters']['limit']) ? $Params['UserParameters']['limit'] : eZINI::instance('owtranslate.ini')->variable( 'NumberPerPage', 'default'), 
 			'offset'				=> isset($Params['UserParameters']['offset']) ? $Params['UserParameters']['offset'] : '0',
 			'sourceKey'				=> $Params['UserParameters']['sourceKey'],
 			'dataKey'				=> isset($_GET['dataKey']) && $_GET['dataKey'] != '' ? $_GET['dataKey'] : '',
