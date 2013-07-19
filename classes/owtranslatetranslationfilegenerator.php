@@ -115,7 +115,7 @@ class OWTranslateTranslationFileGenerator {
             $fp = fopen($file,"r");
             while(!feof($fp)) {
                 $buffer = fgets($fp);
-                if (preg_match_all('#\{[\'"]([^\}]+)[\'"]\|i18n\([\'"]([^}]+)[\'"]\)\}#', $buffer, $tmpMatches)) {
+                if (preg_match_all('#\{[\'"]([^\}]+)[\'"]\|i18n\(\s*[\'"]([^}]+)[\'"]\s*\)\}#', $buffer, $tmpMatches)) {
                     $matches['template'][] = $tmpMatches;
                 } else {
                 	if (preg_match_all('#ezpI18n::tr\([ ]*[\'"]([^\)\}]+)[\'"][ ]*,[ ]*[\'"]([^\)\}]+)[\'"][ ]*\)#', $buffer, $tmpMatches)) {
@@ -196,7 +196,7 @@ class OWTranslateTranslationFileGenerator {
             		if ($xpath->query($query) && !$xpath->query($query)->item(0)) {
             		
 	            		$message = $tsFile->createElement('message');
-	                	$source = $tsFile->createElement('source', $element);
+	                	$source = $tsFile->createElement('source', htmlentities($element));
 	                	$translation = $tsFile->createElement('translation');
 	            		
 	            		$querySourceName = "//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]";
@@ -257,7 +257,7 @@ class OWTranslateTranslationFileGenerator {
             $context->appendChild($name);
             foreach ($tabElement as $element) {
                 $message = $tsFile->createElement('message');
-                $source = $tsFile->createElement('source', $element);
+                $source = $tsFile->createElement('source', htmlentities($element));
                 $translation = $tsFile->createElement('translation');
                 
                 $message->appendChild($source);
@@ -265,7 +265,7 @@ class OWTranslateTranslationFileGenerator {
                 $context->appendChild($message);             
             }
             $ts->appendChild($context);
-        }     
+        }
         $saveXml = $tsFile->save($file, LIBXML_NOEMPTYTAG);
         return $saveXml;
     }
