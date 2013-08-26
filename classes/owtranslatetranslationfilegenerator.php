@@ -166,16 +166,16 @@ class OWTranslateTranslationFileGenerator {
         	$locale = (array_key_exists($language->Locale, $localeOverride) ? $localeOverride[$language->Locale] : $language->Locale);
 
         	if (file_exists($baseDirectory.'/'.$locale.'/translation.ts')) {
-				$saveXml = $this->addTranslationIfNotExist($baseDirectory.'/'.$locale.'/translation.ts');			
-        	} else {        		
+				$saveXml = $this->addTranslationIfNotExist($baseDirectory.'/'.$locale.'/translation.ts');
+        	} else {
 		        $saveXml = $this->addTranslationFile($baseDirectory.'/'.$locale.'/translation.ts');
         	}
-        } 
+        }
         return $saveXml;
     }
-    
+
     /**
-	*	@desc		Add the new translation found in the existing file of translation 
+	*	@desc		Add the new translation found in the existing file of translation
 	*	@author 	David LE RICHE <david.leriche@openwide.fr>
 	*	@params		string	$file => the file where the translation is adding
 	*	@return		bool
@@ -185,46 +185,45 @@ class OWTranslateTranslationFileGenerator {
     public function addTranslationIfNotExist($file) {
     	$tsFile = new DOMDocument();
 		$tsFile->load($file);
-		
+
     	$xpath = new DOMXpath($tsFile);
     	$ts = $tsFile->documentElement;
-    	
-    	foreach($this->tabKey as $sourceName => $tabElement) {    
+
+    	foreach($this->tabKey as $sourceName => $tabElement) {
             foreach ($tabElement as $element) {
             	$query = "//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]/message[source=".(strpos($element, "'") === false ? "'$element'" : "\"$element\"")."]";
             	try {
             		if ($xpath->query($query) && !$xpath->query($query)->item(0)) {
-            		
-	            		$message = $tsFile->createElement('message');
-	                	$source = $tsFile->createElement('source', htmlentities($element));
-	                	$translation = $tsFile->createElement('translation');
-	            		
+
 	            		$querySourceName = "//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]";
-	            		if (!$xpath->query($querySourceName)->item(0)) {
-	            			$context = $tsFile->createElement('context');
-	            			$name = $tsFile->createELement('name', $sourceName);
-	            			
-	            			$context->appendChild($name);
-		                	$message->appendChild($source);
-		                	$message->appendChild($translation);
-		                	$context->appendChild($message);
-		                	$ts->appendChild($context);
-		                	
+
+                        //create context if not exists
+                        if (!$xpath->query($querySourceName)->item(0)) {
+                            $context = $tsFile->createElement('context');
+                            $ts->appendChild($context);
+                            $name = $tsFile->createELement('name', $sourceName);
+                            $context->appendChild($name);
 	            		} else {
-	            			$name = $xpath->query("//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]")->item(0);
-	            			$context = $xpath->query("//context[name=".(strpos($sourceName, "'") === false ? "'$sourceName'" : "\"$sourceName\"")."]/..")->item(0);
-		                	
-		                	$message->appendChild($source);
-		                	$message->appendChild($translation);
-		                	$name->appendChild($message);
+                            $context = $xpath->query($querySourceName)->item(0);
 	            		}
+
+                        $message = $tsFile->createElement('message');
+                        $context->appendChild($message);
+
+                        $source = $tsFile->createElement('source', htmlspecialchars($element));
+                        $message->appendChild($source);
+
+                        $translation = $tsFile->createElement('translation');
+                        $message->appendChild($translation);
+
+
             		}
         		} catch (Exception $e) {
 					eZLog::write($e, 'owtranslate.log');
-				}            	
+				}
             }
-        }   
-        
+        }
+
         try {
         	if ($unlinkFile = unlink($file)) {
         		$saveXml = $tsFile->save($file, LIBXML_NOEMPTYTAG);
@@ -234,7 +233,7 @@ class OWTranslateTranslationFileGenerator {
         }
        	return $saveXml;
     }
-    
+
     /**
 	*	@desc		Create translation file with all translation found
 	*	@author 	David LE RICHE <david.leriche@openwide.fr>
@@ -244,20 +243,20 @@ class OWTranslateTranslationFileGenerator {
 	*	@version 	1.1
 	*/
     public function addTranslationFile($file) {
-    	
-		$doctype = DOMImplementation::createDocumentType("TS"); 
+
+		$doctype = DOMImplementation::createDocumentType("TS");
         $tsFile = DOMImplementation::createDocument(null, 'TS', $doctype);
         $tsFile->encoding = 'UTF-8';
         $tsFile->formatOutput = true;
-    	
+
     	$ts = $tsFile->documentElement;
-    	foreach($this->tabKey as $sourceName => $tabElement) {          
-    		$context = $tsFile->createElement('context');  
-            $name = $tsFile->createELement('name', $sourceName);            
+    	foreach($this->tabKey as $sourceName => $tabElement) {
+    		$context = $tsFile->createElement('context');
+            $name = $tsFile->createELement('name', $sourceName);
             $context->appendChild($name);
             foreach ($tabElement as $element) {
                 $message = $tsFile->createElement('message');
-                $source = $tsFile->createElement('source', htmlentities($element));
+                $source = $tsFile->createElement('source', htmlspecialchars($element));
                 $translation = $tsFile->createElement('translation');
                 
                 $message->appendChild($source);
