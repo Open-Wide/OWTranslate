@@ -10,7 +10,7 @@ $ViewList['list'] = array( 'script' => 'list.php',
                                		                     		
 $ViewList['generation'] = array( 'script' => 'generation.php',
 									'default_navigation_part' => 'translatenavigationpart',
-                               		'functions' => array( 'read' ));
+                               		'functions' => array( 'edit' ));
                                		
 $ViewList['export'] = array( 'script' => 'export.php',
 									'default_navigation_part' => 'translatenavigationpart',
@@ -30,6 +30,7 @@ $ViewList['search'] = array( 'script' => 'search.php',
 
 $FunctionList = array(); 
 $FunctionList['read'] = array();
+$FunctionList['edit'] = array();
 
 
 ?>
